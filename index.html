@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Планировщик</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 RPG Планировщик</h1>
+        <input type="text" id="taskInput" placeholder="Добавить задачу...">
+        <button id="addBtn">+ Добавить</button>
+        <ul id="taskList"></ul>
+        
+        <div class="rpg-stats">
+            <h3>Уровень: <span id="level">1</span></h3>
+            <progress id="xpBar" value="0" max="100"></progress>
+            <p id="achievementText">Достижения: Пока пусто!</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
