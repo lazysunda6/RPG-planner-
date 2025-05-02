@@ -33,7 +33,14 @@ const game = (() => {
 
   function loadData() {
     const saved = safeParse(localStorage.getItem('gameState'));
-    if (saved) Object.assign(state, saved);
+    if (saved) {
+      state.tasks = Array.isArray(saved.tasks) ? saved.tasks : state.tasks;
+      state.xp = typeof saved.xp === 'number' ? saved.xp : state.xp;
+      state.level = typeof saved.level === 'number' ? saved.level : state.level;
+      state.bossHp = typeof saved.bossHp === 'number' ? saved.bossHp : state.bossHp;
+      state.items = Array.isArray(saved.items) ? saved.items : state.items;
+      state.earnedAchievements = new Set(saved.earnedAchievements || []);
+    }
   }
 
   function saveData() {
@@ -77,7 +84,7 @@ const game = (() => {
 
   function checkLevelUp() {
     const required = getRequiredXP();
-    if (state.xp >= required) {
+    while (state.xp >= required) {
       state.xp -= required;
       state.level++;
       checkAchievements();
@@ -90,13 +97,23 @@ const game = (() => {
 
   function attackBoss() {
     if (state.bossHp <= 0) return alert('Босс уже побеждён!');
-    const damage = config.bossDamageMin + Math.floor(Math.random() * (config.bossDamageMax - config.bossDamageMin + 1));
+    let damage = config.bossDamageMin + Math.floor(Math.random() * (config.bossDamageMax - config.bossDamageMin + 1));
+    const strengthScroll = state.items.find(item => item.name === "Свиток силы" && !item.used);
+    if (strengthScroll) {
+      damage += strengthScroll.damageBonus;
+    }
     state.bossHp = Math.max(0, state.bossHp - damage);
     if (state.bossHp <= 0) {
       state.xp += config.bossXPReward;
       checkLevelUp();
       alert(`Босс повержен! Получено ${config.bossXPReward} XP!`);
     }
+    updateGame();
+  }
+
+  function resetBoss() {
+    state.bossHp = 100 + state.level * 10;
+    document.querySelector('#attackBossBtn').disabled = false;
     updateGame();
   }
 
@@ -107,6 +124,24 @@ const game = (() => {
     if (item.xp) state.xp += item.xp;
     checkLevelUp();
     updateGame();
+  }
+
+  function resetGame() {
+    if (confirm('Вы уверены, что хотите сбросить весь прогресс?')) {
+      localStorage.removeItem('gameState');
+      Object.assign(state, {
+        tasks: [],
+        xp: 0,
+        level: 1,
+        bossHp: 100,
+        items: [
+          { name: "Зелье опыта", xp: 25, used: false },
+          { name: "Свиток силы", damageBonus: 5, used: false }
+        ],
+        earnedAchievements: new Set()
+      });
+      updateGame();
+    }
   }
 
   function checkAchievements() {
@@ -150,14 +185,14 @@ const game = (() => {
   function renderBoss() {
     document.getElementById('bossHp').textContent = state.bossHp;
     document.getElementById('bossProgress').value = state.bossHp;
-    if (state.bossHp <= 0) {
-      document.querySelector('#attackBossBtn').disabled = true;
-    }
+    document.getElementById('bossProgress').max = 100 + state.level * 10;
+    document.querySelector('#attackBossBtn').disabled = state.bossHp <= 0;
+    document.querySelector('#resetBossBtn').style.display = state.bossHp <= 0 ? 'block' : 'none';
   }
 
   function renderInventory() {
     const html = state.items.map((item, i) => `
-      <div class="item" onclick="game.useItem(${i})" ${item.used ? 'style="opacity:0.5"' : ''}>
+      <div class="item" role="button" tabindex="0" onclick="game.useItem(${i})" ${item.used ? 'aria-disabled="true" style="opacity:0.5"' : ''}>
         ${item.name}${item.used ? ' (использован)' : ''}
       </div>
     `).join('') || 'пусто';
@@ -184,16 +219,16 @@ const game = (() => {
       if (e.key === 'Enter') addTask();
     });
     document.querySelector('#attackBossBtn').addEventListener('click', attackBoss);
+    document.querySelector('#resetBossBtn').addEventListener('click', resetBoss);
+    document.querySelector('#resetGameBtn').addEventListener('click', resetGame);
 
-    document.querySelectorAll('.taskBtn').forEach(btn => {
-      btn.addEventListener('click', (e) => toggleTask(e.target.dataset.index));
-    });
-    document.querySelectorAll('.deleteBtn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const index = e.target.dataset.index;
-        state.tasks.splice(index, 1);
-        updateGame();
-      });
+    document.getElementById('taskList').addEventListener('click', e => {
+      const index = e.target.dataset.index;
+      if (e.target.classList.contains('taskBtn')) {
+        toggleTask(index);
+      } else if (e.target.classList.contains('deleteBtn')) {
+        game.deleteTask(index);
+      }
     });
   }
 
