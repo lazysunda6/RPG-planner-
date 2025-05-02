@@ -133,8 +133,8 @@ const game = (() => {
     list.innerHTML = state.tasks.map((task, i) => `
       <li>
         <span class="${task.done ? 'task-complete' : ''}">${task.text}</span>
-        <button onclick="game.toggleTask(${i})">${task.done ? '✓' : 'Сделать'}</button>
-        <button onclick="game.deleteTask(${i})">Удалить</button>
+        <button class="taskBtn" data-index="${i}">${task.done ? '✓' : 'Сделать'}</button>
+        <button class="deleteBtn" data-index="${i}">Удалить</button>
       </li>
     `).join('');
   }
@@ -151,7 +151,7 @@ const game = (() => {
     document.getElementById('bossHp').textContent = state.bossHp;
     document.getElementById('bossProgress').value = state.bossHp;
     if (state.bossHp <= 0) {
-      document.querySelector('#boss button').disabled = true;
+      document.querySelector('#attackBossBtn').disabled = true;
     }
   }
 
@@ -183,6 +183,18 @@ const game = (() => {
     document.getElementById('taskInput').addEventListener('keypress', e => {
       if (e.key === 'Enter') addTask();
     });
+    document.querySelector('#attackBossBtn').addEventListener('click', attackBoss);
+
+    document.querySelectorAll('.taskBtn').forEach(btn => {
+      btn.addEventListener('click', (e) => toggleTask(e.target.dataset.index));
+    });
+    document.querySelectorAll('.deleteBtn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const index = e.target.dataset.index;
+        state.tasks.splice(index, 1);
+        updateGame();
+      });
+    });
   }
 
   function updateGame() {
@@ -206,4 +218,3 @@ const game = (() => {
 })();
 
 window.onload = game.init;
-window.game = game;
