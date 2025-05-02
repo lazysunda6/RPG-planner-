@@ -3,22 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';">
   <title>Task Manager</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="taskApp">
+  <main id="taskApp">
     <h1>Управление задачами</h1>
-    <input type="text" id="taskInput" placeholder="Введите задачу">
-    <button id="addBtn">Добавить задачу</button>
+    <label for="taskInput">Введите задачу</label>
+    <input type="text" id="taskInput" placeholder="Например, купить продукты">
+    <button id="addBtn" type="button">Добавить задачу</button>
 
-    <ul id="taskList"></ul>
+    <ul id="taskList" role="list" aria-live="polite"></ul>
 
     <div id="level">Уровень: 1</div>
-    <progress id="xpBar" max="100" value="0"></progress>
+    <progress id="xpBar" max="100" value="0" aria-label="Прогресс опыта"></progress>
+    <div>Прогресс: <span id="xpValue">0</span>/100</div>
     <div id="achievementText"></div>
-  </div>
+  </main>
 
-  <script src="script.js"></script>
+  <script defer src="script.js"></script>
 </body>
 </html>
