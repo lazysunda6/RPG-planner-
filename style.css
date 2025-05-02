@@ -1,162 +1,137 @@
+/* Общие стили */
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #1e1e2f;
+  color: #e0e0e0;
+  margin: 0;
+  padding: 20px;
 }
 
-#taskApp {
+main#taskApp {
   max-width: 600px;
-  min-width: 280px;
-  margin: 0 auto;
-  padding: 0 15px;
+  margin: auto;
+  padding: 20px;
+  background: #2e2e3e;
+  border-radius: 12px;
+  box-shadow: 0 0 12px #000000aa;
 }
 
-input, button {
+/* Заголовки */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ffd700;
+}
+
+h2 {
+  margin-top: 30px;
+  color: #87cefa;
+}
+
+/* Инпут и кнопки */
+input[type="text"] {
+  width: calc(100% - 130px);
   padding: 10px;
-  margin: 5px 0;
-  box-sizing: border-box;
-}
-
-input:focus, button:focus-visible {
-  outline: 2px solid #007bff;
-  outline-offset: 2px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #444;
+  color: #fff;
 }
 
 button {
-  cursor: pointer;
-  margin-left: 5px;
-}
-
-#addBtn {
-  background-color: #28a745;
-  color: white;
+  padding: 10px 15px;
   border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s;
+  border-radius: 6px;
+  background-color: #5aafff;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
 }
 
-#addBtn:hover {
-  background-color: #218838;
+button:hover {
+  background-color: #478ce0;
 }
 
-ul {
-  list-style: none;
+ul#taskList {
+  list-style-type: none;
   padding: 0;
 }
 
 li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  background: #393959;
   margin: 10px 0;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .task-text {
-  flex: 1;
+  flex-grow: 1;
 }
 
 .task-complete {
   text-decoration: line-through;
-  color: #555;
+  color: #8f8;
 }
 
-li button {
-  background-color: #f8f9fa;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  padding: 5px 10px;
-  transition: background-color 0.3s;
-}
-
-li button:hover {
-  background-color: #e0e0e0;
-}
-
-li button:nth-child(3) {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-}
-
-li button:nth-child(3):hover {
-  background-color: #c82333;
-}
-
-li button:nth-child(4) {
-  background-color: #007bff;
-  color: white;
-  border: none;
-}
-
-li button:nth-child(4):hover {
-  background-color: #0056b3;
-}
-
-#xpBar {
+progress#xpBar {
   width: 100%;
-  margin-top: 10px;
   height: 20px;
-  border-radius: 5px;
-  background-color: #f0f0f0;
+  margin-top: 10px;
+  appearance: none;
 }
 
-#xpBar::-webkit-progress-bar {
-  background-color: #f0f0f0;
-  border-radius: 5px;
+progress::-webkit-progress-bar {
+  background-color: #555;
+  border-radius: 10px;
 }
 
-#xpBar::-webkit-progress-value {
-  background-color: #007bff;
-  border-radius: 5px;
-  transition: width 0.3s ease;
+progress::-webkit-progress-value {
+  background-color: #00ff88;
+  border-radius: 10px;
 }
 
-#xpBar::-moz-progress-bar {
-  background-color: #007bff;
-  border-radius: 5px;
-}
-
+/* Достижение */
 #achievementText {
   margin-top: 10px;
-  color: green;
+  font-weight: bold;
+  color: #ffcc00;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .achievement-unlock {
-  animation: achievementAnimation 3s ease-out forwards;
+  animation: flash 1s ease-in-out;
 }
 
-@keyframes achievementAnimation {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-   sospe20% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  80% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
+@keyframes flash {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
 }
 
-@media (max-width: 480px) {
-  #taskApp {
-    min-width: 100%;
-    padding: 0 10px;
-  }
+/* Инвентарь, квесты, босс */
+section {
+  background-color: #28283d;
+  border: 1px solid #444;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
 
-  input, button {
-    padding: 8px;
-  }
+#boss span {
+  font-weight: bold;
+  color: #ff6666;
+}
 
-  .task-text {
-    width: 50%;
-  }
+#boss button {
+  margin-top: 10px;
+  background-color: #ff4444;
+}
+
+#boss button:hover {
+  background-color: #dd3333;
 }
