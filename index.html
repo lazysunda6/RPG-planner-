@@ -3,28 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self';">
-  <title>Task Manager</title>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <title>Task RPG Manager</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main id="taskApp">
-    <h1>Управление задачами</h1>
-    <label for="taskInput">Введите задачу</label>
-    <input type="text" id="taskInput" placeholder="Например, купить продукты">
-    <button id="addBtn" type="button">Добавить задачу</button>
+    <h1>Управление задачами: RPG Edition</h1>
+    <label for="taskInput">Введите квест:</label>
+    <input type="text" id="taskInput" placeholder="Например, победить прокрастинацию">
+    <button id="addBtn">Добавить квест</button>
 
-    <ul id="taskList" role="list" aria-live="polite"></ul>
+    <ul id="taskList" aria-live="polite"></ul>
 
     <div id="level">Уровень: 1</div>
-    <progress id="xpBar" max="100" value="0" aria-label="Прогресс опыта"></progress>
-    <div>Прогресс: <span id="xpValue">0</span>/100</div>
+    <progress id="xpBar" max="100" value="0"></progress>
+    <div>Опыт: <span id="xpValue">0</span>/<span id="requiredXP">100</span></div>
     <div id="achievementText"></div>
+
+    <section id="inventory"><h2>Инвентарь</h2> пусто</section>
+    <section id="quests"><h2>Активные квесты</h2> нет активных</section>
+    
+    <section id="boss">
+      <h2>Босс: Лень</h2>
+      <progress id="bossProgress" max="100" value="100"></progress>
+      <div>HP: <span id="bossHp">100</span>/100</div>
+      <button onclick="game.attackBoss()">Атаковать (10–20 урона)</button>
+    </section>
   </main>
 
-  <script defer src="script.js"></script>
+  <script src="app.js"></script>
 </body>
-</html
->
+</html>
