@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Task List</title>
   <style>
-    /* Красивые стили */
     body {
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       font-family: 'Segoe UI', Tahoma, sans-serif;
@@ -66,10 +65,39 @@
       border-radius: 6px;
       cursor: pointer;
       transition: transform 0.2s;
+      animation: taskAppear 0.5s ease-in-out;
     }
 
     #taskList li:hover {
       transform: translateX(5px);
+    }
+
+    /* Анимация появления задачи */
+    @keyframes taskAppear {
+      0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.9);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Анимация завершения задачи */
+    .task-complete {
+      animation: taskComplete 0.5s ease-in-out forwards;
+    }
+
+    @keyframes taskComplete {
+      0% {
+        opacity: 1;
+        transform: rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: rotate(5deg);
+      }
     }
 
     .rpg-stats {
@@ -86,6 +114,8 @@
       height: 10px;
       margin: 10px 0;
       border-radius: 5px;
+      animation: xpFill 1s ease-in-out;
+      position: relative;
     }
 
     #xpBar::-webkit-progress-bar {
@@ -96,6 +126,45 @@
     #xpBar::-webkit-progress-value {
       background: #ffd700;
       border-radius: 5px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Эффект сияния для прогресс-бара */
+    @keyframes xpFill {
+      0% {
+        box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+      }
+      50% {
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+      }
+      100% {
+        box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+      }
+    }
+
+    /* Анимация достижения */
+    #achievementText {
+      display: inline-block;
+    }
+
+    .achievement-unlock {
+      animation: achievementUnlock 0.7s ease-in-out;
+    }
+
+    @keyframes achievementUnlock {
+      0% {
+        transform: scale(1);
+        color: white;
+      }
+      50% {
+        transform: scale(1.2);
+        color: #ffd700;
+      }
+      100% {
+        transform: scale(1);
+        color: white;
+      }
     }
   </style>
 </head>
