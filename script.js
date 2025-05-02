@@ -1,211 +1,209 @@
-(function () {
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  let xp = parseInt(localStorage.getItem("xp")) || 0;
-  let level = parseInt(localStorage.getItem("level")) || 1;
-  let saveTimeout;
+const game = (() => {
+  const config = {
+    xpPerTask: 15,
+    baseXPRequired: 100,
+    xpGrowthFactor: 1.15,
+    bossDamageMin: 10,
+    bossDamageMax: 20,
+    bossXPReward: 100
+  };
 
-  const achievements = [
-    { id: 0, text: "🏆 Новая надежда: выполни первую задачу!", condition: () => tasks.length === 1 && tasks[0].done },
-    { id: 1, text: "🎮 Прогрессор: +3 задачи за день!", condition: () => tasks.filter(t => t.done).length >= 3 },
-    { id: 2, text: "🕒 Соня: сделай задачу после обеда", condition: () => new Date().getHours() >= 12 && tasks.some(t => t.done) },
-    { id: 3, text: "👑 Король продуктивности: все задачи закрыл!!", condition: () => tasks.length > 0 && tasks.every(t => t.done) },
-  ];
+  const state = {
+    tasks: [],
+    xp: 0,
+    level: 1,
+    bossHp: 100,
+    items: [
+      { name: "Зелье опыта", xp: 25, used: false },
+      { name: "Свиток силы", damageBonus: 5, used: false }
+    ],
+    achievements: [
+      { id: 0, text: "🏆 Первый шаг: выполни задачу!", condition: s => s.tasks.some(t => t.done) },
+      { id: 1, text: "⚔️ Воин: победи босса!", condition: s => s.bossHp <= 0 },
+      { id: 2, text: "🧙 Маг: достиг 5 уровня", condition: s => s.level >= 5 }
+    ],
+    earnedAchievements: new Set()
+  };
+
+  function init() {
+    loadData();
+    bindEvents();
+    renderAll();
+  }
 
   function loadData() {
-    try {
-      tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-      xp = parseInt(localStorage.getItem("xp")) || 0;
-      level = parseInt(localStorage.getItem("level")) || 1;
-      renderTasks();
-      updateStats();
-    } catch (e) {
-      console.error("Ошибка загрузки данных:", e);
-    }
+    const saved = safeParse(localStorage.getItem('gameState'));
+    if (saved) Object.assign(state, saved);
   }
 
   function saveData() {
-    clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(() => {
-      try {
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-        localStorage.setItem("xp", xp);
-        localStorage.setItem("level", level);
-      } catch (e) {
-        console.error("Ошибка сохранения данных:", e);
-      }
-    }, 500);
+    localStorage.setItem('gameState', JSON.stringify({
+      tasks: state.tasks,
+      xp: state.xp,
+      level: state.level,
+      bossHp: state.bossHp,
+      items: state.items,
+      earnedAchievements: Array.from(state.earnedAchievements)
+    }));
   }
 
-  document.getElementById("addBtn").addEventListener("click", () => {
-    const taskInput = document.getElementById("taskInput");
-    if (!taskInput) {
-      console.error("Элемент taskInput не найден");
-      return;
+  function safeParse(json) {
+    try {
+      return json ? JSON.parse(json) : null;
+    } catch {
+      return null;
     }
-    const taskText = taskInput.value.trim();
-    if (!taskText) {
-      alert("Пожалуйста, введите задачу!");
-      return;
-    }
-
-    tasks.push({ text: taskText, done: false });
-    renderTasks();
-    taskInput.value = "";
-    saveData();
-    checkAchievements();
-  });
-
-  document.getElementById("taskInput").addEventListener("keypress", (e) => {
-    if (e.key === "Enter") document.getElementById("addBtn").click();
-  });
-
-  function renderTasks() {
-    const taskList = document.getElementById("taskList");
-    if (!taskList) {
-      console.error("Элемент taskList не найден");
-      return;
-    }
-
-    taskList.innerHTML = "";
-    tasks.forEach((task, index) => {
-      const li = document.createElement("li");
-
-      const span = document.createElement("span");
-      span.className = `task-text ${task.done ? "task-complete" : ""}`;
-      span.textContent = task.text;
-      li.appendChild(span);
-
-      const editBtn = document.createElement("button");
-      editBtn.textContent = "Редактировать";
-      editBtn.className = "edit-btn";
-      editBtn.dataset.index = index;
-      li.appendChild(editBtn);
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "Удалить";
-      deleteBtn.className = "delete-btn";
-      deleteBtn.dataset.index = index;
-      li.appendChild(deleteBtn);
-
-      const doneBtn = document.createElement("button");
-      doneBtn.textContent = task.done ? "✓ Сделано" : "Сделать";
-      doneBtn.className = "done-btn";
-      doneBtn.dataset.index = index;
-      li.appendChild(doneBtn);
-
-      taskList.appendChild(li);
-    });
-    console.log("Задачи отрендерены:", tasks);
   }
 
-  document.getElementById("taskList").addEventListener("click", (e) => {
-    const target = e.target;
-    if (!target.matches("button")) return;
-
-    const index = parseInt(target.dataset.index);
-    console.log("Клик по кнопке:", target.textContent, "Индекс:", index);
-    if (isNaN(index)) {
-      console.error("Неверный индекс:", target.dataset.index);
-      return;
-    }
-
-    if (target.classList.contains("edit-btn")) {
-      editTask(index);
-    } else if (target.classList.contains("delete-btn")) {
-      deleteTask(index);
-    } else if (target.classList.contains("done-btn")) {
-      markAsDone(index);
-    }
-  });
-
-  function editTask(index) {
-    const li = document.querySelector(`#taskList li:nth-child(${index + 1})`);
-    if (!li) {
-      console.error("Элемент li не найден для индекса:", index);
-      return;
-    }
-
-    const span = li.querySelector(".task-text");
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = tasks[index].text;
-    li.replaceChild(input, span);
-
+  function addTask() {
+    const input = document.getElementById('taskInput');
+    const text = input.value.trim();
+    if (!text) return alert('Введите текст квеста!');
+    state.tasks.push({ text, done: false });
+    input.value = '';
     input.focus();
-    input.addEventListener("blur", () => {
-      const newText = input.value.trim();
-      if (newText) {
-        tasks[index].text = newText;
-        saveData();
-        renderTasks();
-      } else {
-        renderTasks();
-      }
-      console.log("Задача отредактирована:", tasks[index]);
-    });
-    input.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") input.blur();
-    });
+    updateGame();
   }
 
-  function deleteTask(index) {
-    tasks.splice(index, 1);
-    saveData();
-    renderTasks();
-    checkAchievements();
-    console.log("Задача удалена, индекс:", index);
-  }
-
-  function markAsDone(index) {
-    tasks[index].done = !tasks[index].done;
-    if (tasks[index].done) {
-      xp += 10;
-      if (xp >= 100) {
-        xp -= 100;
-        level += 1;
-      }
+  function toggleTask(index) {
+    const task = state.tasks[index];
+    task.done = !task.done;
+    if (task.done) {
+      state.xp += config.xpPerTask;
+      checkLevelUp();
     }
-    saveData();
-    renderTasks();
-    updateStats();
-    checkAchievements();
-    console.log("Задача отмечена:", tasks[index]);
+    updateGame();
   }
 
-  function updateStats() {
-    const levelElement = document.getElementById("level");
-    const xpBar = document.getElementById("xpBar");
-    const xpValue = document.getElementById("xpValue");
-    if (!levelElement || !xpBar || !xpValue) {
-      console.error("Элементы level, xpBar или xpValue не найдены");
-      return;
+  function checkLevelUp() {
+    const required = getRequiredXP();
+    if (state.xp >= required) {
+      state.xp -= required;
+      state.level++;
+      checkAchievements();
     }
+  }
 
-    levelElement.textContent = `Уровень: ${level}`;
-    xpBar.value = xp;
-    xpValue.textContent = xp;
+  function getRequiredXP() {
+    return Math.floor(config.baseXPRequired * Math.pow(config.xpGrowthFactor, state.level - 1));
+  }
+
+  function attackBoss() {
+    if (state.bossHp <= 0) return alert('Босс уже побеждён!');
+    const damage = config.bossDamageMin + Math.floor(Math.random() * (config.bossDamageMax - config.bossDamageMin + 1));
+    state.bossHp = Math.max(0, state.bossHp - damage);
+    if (state.bossHp <= 0) {
+      state.xp += config.bossXPReward;
+      checkLevelUp();
+      alert(`Босс повержен! Получено ${config.bossXPReward} XP!`);
+    }
+    updateGame();
+  }
+
+  function useItem(index) {
+    const item = state.items[index];
+    if (item.used) return;
+    item.used = true;
+    if (item.xp) state.xp += item.xp;
+    checkLevelUp();
+    updateGame();
   }
 
   function checkAchievements() {
-    const achievementText = document.getElementById("achievementText");
-    if (!achievementText) {
-      console.error("Элемент achievementText не найден");
-      return;
-    }
-
-    const earned = achievements.find(ach => ach.condition());
-    if (earned) {
-      achievementText.textContent = `Достижение: ${earned.text}`;
-      achievementText.classList.add("achievement-unlock");
-      setTimeout(() => {
-        achievementText.classList.remove("achievement-unlock");
-        achievementText.textContent = "";
-      }, 3000);
-    } else {
-      achievementText.textContent = "";
-    }
-    console.log("Проверка достижений, найдено:", earned ? earned.text : "ничего");
+    state.achievements.forEach(ach => {
+      if (!state.earnedAchievements.has(ach.id)) {
+        if (ach.condition(state)) {
+          state.earnedAchievements.add(ach.id);
+          showAchievement(ach.text);
+        }
+      }
+    });
   }
 
-  window.onload = loadData;
+  function renderAll() {
+    renderTasks();
+    renderStats();
+    renderBoss();
+    renderInventory();
+    renderQuests();
+  }
+
+  function renderTasks() {
+    const list = document.getElementById('taskList');
+    list.innerHTML = state.tasks.map((task, i) => `
+      <li>
+        <span class="${task.done ? 'task-complete' : ''}">${task.text}</span>
+        <button onclick="game.toggleTask(${i})">${task.done ? '✓' : 'Сделать'}</button>
+        <button onclick="game.deleteTask(${i})">Удалить</button>
+      </li>
+    `).join('');
+  }
+
+  function renderStats() {
+    document.getElementById('level').textContent = `Уровень: ${state.level}`;
+    document.getElementById('xpBar').value = state.xp;
+    document.getElementById('xpBar').max = getRequiredXP();
+    document.getElementById('xpValue').textContent = state.xp;
+    document.getElementById('requiredXP').textContent = getRequiredXP();
+  }
+
+  function renderBoss() {
+    document.getElementById('bossHp').textContent = state.bossHp;
+    document.getElementById('bossProgress').value = state.bossHp;
+    if (state.bossHp <= 0) {
+      document.querySelector('#boss button').disabled = true;
+    }
+  }
+
+  function renderInventory() {
+    const html = state.items.map((item, i) => `
+      <div class="item" onclick="game.useItem(${i})" ${item.used ? 'style="opacity:0.5"' : ''}>
+        ${item.name}${item.used ? ' (использован)' : ''}
+      </div>
+    `).join('') || 'пусто';
+    document.getElementById('inventory').innerHTML = `<h2>Инвентарь</h2>${html}`;
+  }
+
+  function renderQuests() {
+    const active = state.tasks.filter(t => !t.done);
+    const html = active.length ?
+      active.map(t => `<div>${t.text}</div>`).join('') : 'нет активных';
+    document.getElementById('quests').innerHTML = `<h2>Квесты</h2>${html}`;
+  }
+
+  function showAchievement(text) {
+    const el = document.getElementById('achievementText');
+    el.textContent = `Достижение: ${text}`;
+    el.classList.add('achievement-unlock');
+    setTimeout(() => el.classList.remove('achievement-unlock'), 3000);
+  }
+
+  function bindEvents() {
+    document.getElementById('addBtn').addEventListener('click', addTask);
+    document.getElementById('taskInput').addEventListener('keypress', e => {
+      if (e.key === 'Enter') addTask();
+    });
+  }
+
+  function updateGame() {
+    checkAchievements();
+    renderAll();
+    saveData();
+  }
+
+  return {
+    init,
+    addTask,
+    toggleTask,
+    deleteTask: index => {
+      state.tasks.splice(index, 1);
+      updateGame();
+    },
+    attackBoss,
+    useItem,
+    updateGame
+  };
 })();
+
+window.onload = game.init;
+window.game = game;
