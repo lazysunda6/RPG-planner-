@@ -1,20 +1,41 @@
 body {
   font-family: Arial, sans-serif;
+  margin: 20px;
 }
 
 #taskApp {
-  width: 300px;
+  max-width: 600px;
+  min-width: 280px;
   margin: 0 auto;
+  padding: 0 15px;
 }
 
 input, button {
-  width: 100%;
   padding: 10px;
   margin: 5px 0;
+  box-sizing: border-box;
+}
+
+input:focus, button:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
 }
 
 button {
   cursor: pointer;
+  margin-left: 5px;
+}
+
+#addBtn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+#addBtn:hover {
+  background-color: #218838;
 }
 
 ul {
@@ -23,29 +44,78 @@ ul {
 }
 
 li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 10px 0;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
-button {
-  margin-left: 5px;
-}
-
 .task-text {
-  display: inline-block;
-  width: 60%;
+  flex: 1;
 }
 
 .task-complete {
   text-decoration: line-through;
-  color: gray;
+  color: #555;
+}
+
+li button {
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 5px 10px;
+  transition: background-color 0.3s;
+}
+
+li button:hover {
+  background-color: #e0e0e0;
+}
+
+li button:nth-child(3) {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+}
+
+li button:nth-child(3):hover {
+  background-color: #c82333;
+}
+
+li button:nth-child(4) {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+li button:nth-child(4):hover {
+  background-color: #0056b3;
 }
 
 #xpBar {
   width: 100%;
   margin-top: 10px;
+  height: 20px;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+}
+
+#xpBar::-webkit-progress-bar {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+#xpBar::-webkit-progress-value {
+  background-color: #007bff;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+#xpBar::-moz-progress-bar {
+  background-color: #007bff;
+  border-radius: 5px;
 }
 
 #achievementText {
@@ -54,10 +124,39 @@ button {
 }
 
 .achievement-unlock {
-  animation: achievementAnimation 1s ease-out;
+  animation: achievementAnimation 3s ease-out forwards;
 }
 
 @keyframes achievementAnimation {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+   sospe20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@media (max-width: 480px) {
+  #taskApp {
+    min-width: 100%;
+    padding: 0 10px;
+  }
+
+  input, button {
+    padding: 8px;
+  }
+
+  .task-text {
+    width: 50%;
+  }
 }
