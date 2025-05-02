@@ -1,8 +1,4 @@
 // script.js
-import { safeParse, clamp } from './utils.js';
-import { gameData } from './data.js';
-import { playSound } from './sound.js';
-
 const game = (() => {
   const config = {
     xpPerTask: 15,
@@ -82,7 +78,7 @@ const game = (() => {
     while (state.xp >= required) {
       state.xp -= required;
       state.level++;
-      playSound('levelUp');
+      // playSound('levelUp');
       checkAchievements();
     }
   }
@@ -99,7 +95,7 @@ const game = (() => {
       damage += strengthScroll.damageBonus;
     }
     state.bossHp = clamp(state.bossHp - damage, 0, gameData.bosses[state.currentBoss].maxHp);
-    playSound('attack');
+    // playSound('attack');
     if (state.bossHp <= 0) {
       state.defeatedBosses.add(state.currentBoss);
       state.xp += gameData.bosses[state.currentBoss].xpReward;
@@ -215,7 +211,7 @@ const game = (() => {
     const el = document.getElementById('achievementText');
     el.textContent = `Достижение: ${text}`;
     el.classList.add('achievement-unlock');
-    playSound('achievement');
+    // playSound('achievement');
     setTimeout(() => el.classList.remove('achievement-unlock'), 3000);
   }
 
