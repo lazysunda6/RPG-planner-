@@ -38,7 +38,10 @@
 
   document.getElementById("addBtn").addEventListener("click", () => {
     const taskInput = document.getElementById("taskInput");
-    if (!taskInput) return;
+    if (!taskInput) {
+      console.error("Элемент taskInput не найден");
+      return;
+    }
     const taskText = taskInput.value.trim();
     if (!taskText) {
       alert("Пожалуйста, введите задачу!");
@@ -58,7 +61,10 @@
 
   function renderTasks() {
     const taskList = document.getElementById("taskList");
-    if (!taskList) return;
+    if (!taskList) {
+      console.error("Элемент taskList не найден");
+      return;
+    }
 
     taskList.innerHTML = "";
     tasks.forEach((task, index) => {
@@ -71,43 +77,53 @@
 
       const editBtn = document.createElement("button");
       editBtn.textContent = "Редактировать";
-      editBtn.dataset.index = index; // Сохраняем индекс в data-атрибут
+      editBtn.className = "edit-btn";
+      editBtn.dataset.index = index;
       li.appendChild(editBtn);
 
       const deleteBtn = document.createElement("button");
       deleteBtn.textContent = "Удалить";
+      deleteBtn.className = "delete-btn";
       deleteBtn.dataset.index = index;
       li.appendChild(deleteBtn);
 
       const doneBtn = document.createElement("button");
       doneBtn.textContent = task.done ? "✓ Сделано" : "Сделать";
+      doneBtn.className = "done-btn";
       doneBtn.dataset.index = index;
       li.appendChild(doneBtn);
 
       taskList.appendChild(li);
     });
+    console.log("Задачи отрендерены:", tasks);
   }
 
-  // Делегирование событий для кнопок
   document.getElementById("taskList").addEventListener("click", (e) => {
     const target = e.target;
     if (!target.matches("button")) return;
 
     const index = parseInt(target.dataset.index);
-    if (isNaN(index)) return;
+    console.log("Клик по кнопке:", target.textContent, "Индекс:", index);
+    if (isNaN(index)) {
+      console.error("Неверный индекс:", target.dataset.index);
+      return;
+    }
 
-    if (target.textContent === "Редактировать") {
+    if (target.classList.contains("edit-btn")) {
       editTask(index);
-    } else if (target.textContent === "Удалить") {
+    } else if (target.classList.contains("delete-btn")) {
       deleteTask(index);
-    } else if (target.textContent === "Сделать" || target.textContent === "✓ Сделано") {
+    } else if (target.classList.contains("done-btn")) {
       markAsDone(index);
     }
   });
 
   function editTask(index) {
     const li = document.querySelector(`#taskList li:nth-child(${index + 1})`);
-    if (!li) return;
+    if (!li) {
+      console.error("Элемент li не найден для индекса:", index);
+      return;
+    }
 
     const span = li.querySelector(".task-text");
     const input = document.createElement("input");
@@ -125,6 +141,7 @@
       } else {
         renderTasks();
       }
+      console.log("Задача отредактирована:", tasks[index]);
     });
     input.addEventListener("keypress", (e) => {
       if (e.key === "Enter") input.blur();
@@ -136,6 +153,7 @@
     saveData();
     renderTasks();
     checkAchievements();
+    console.log("Задача удалена, индекс:", index);
   }
 
   function markAsDone(index) {
@@ -151,13 +169,17 @@
     renderTasks();
     updateStats();
     checkAchievements();
+    console.log("Задача отмечена:", tasks[index]);
   }
 
   function updateStats() {
     const levelElement = document.getElementById("level");
     const xpBar = document.getElementById("xpBar");
     const xpValue = document.getElementById("xpValue");
-    if (!levelElement || !xpBar || !xpValue) return;
+    if (!levelElement || !xpBar || !xpValue) {
+      console.error("Элементы level, xpBar или xpValue не найдены");
+      return;
+    }
 
     levelElement.textContent = `Уровень: ${level}`;
     xpBar.value = xp;
@@ -166,12 +188,15 @@
 
   function checkAchievements() {
     const achievementText = document.getElementById("achievementText");
-    if (!achievementText) return;
+    if (!achievementText) {
+      console.error("Элемент achievementText не найден");
+      return;
+    }
 
     const earned = achievements.find(ach => ach.condition());
     if (earned) {
       achievementText.textContent = `Достижение: ${earned.text}`;
-      achievementCheckText.classList.add("achievement-unlock");
+      achievementText.classList.add("achievement-unlock");
       setTimeout(() => {
         achievementText.classList.remove("achievement-unlock");
         achievementText.textContent = "";
@@ -179,6 +204,7 @@
     } else {
       achievementText.textContent = "";
     }
+    console.log("Проверка достижений, найдено:", earned ? earned.text : "ничего");
   }
 
   window.onload = loadData;
