@@ -153,7 +153,10 @@
     if (earned) {
       achievementText.textContent = `Достижение: ${earned.text}`;
       achievementText.classList.add("achievement-unlock");
-      setTimeout(() => achievementText.classList.remove("achievement-unlock"), 3000);
+      setTimeout(() => {
+        achievementText.classList.remove("achievement-unlock");
+        achievementText.textContent = "";
+      }, 3000);
     } else {
       achievementText.textContent = "";
     }
