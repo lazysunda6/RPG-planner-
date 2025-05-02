@@ -1,3 +1,27 @@
+let dailyQuests = JSON.parse(localStorage.getItem("dailyQuests")) || generateDailyQuests();
+let completedTasks = parseInt(localStorage.getItem("completedTasks")) || 0;
+let achievements = [];
+
+function generateDailyQuests() {
+  const questPool = [
+    "Сделай 10 приседаний",
+    "Почисти стол",
+    "Выучи 5 английских слов",
+    "Прочитай 1 страницу книги",
+    "Сделай дыхательную паузу",
+    "Пройди 1000 шагов",
+    "Напиши список целей"
+  ];
+  let quests = [];
+  while (quests.length < 3) {
+    let quest = questPool[Math.floor(Math.random() * questPool.length)];
+    if (!quests.includes(quest)) quests.push(quest);
+  }
+  const result = quests.map(text => ({ text, done: false }));
+  localStorage.setItem("dailyQuests", JSON.stringify(result));
+  localStorage.setItem("lastQuestDate", new Date().toDateString());
+  return result;
+}
 let tasks = [];
 let xp = 0;
 let level = 1;
