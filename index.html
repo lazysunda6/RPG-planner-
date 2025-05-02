@@ -4,9 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Task RPG Manager</title>
+  <link rel="icon" href="favicon.ico">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <noscript>
+    <p>Для работы приложения требуется JavaScript. Пожалуйста, включите его в настройках браузера.</p>
+  </noscript>
   <main id="taskApp">
     <h1>Управление задачами: RPG Edition</h1>
     <label for="taskInput">Введите квест:</label>
@@ -22,16 +26,17 @@
 
     <section id="inventory"><h2>Инвентарь</h2> пусто</section>
     <section id="quests"><h2>Активные квесты</h2> нет активных</section>
-    
+
     <section id="boss">
       <h2>Босс: Лень</h2>
       <progress id="bossProgress" max="100" value="100"></progress>
       <div>HP: <span id="bossHp">100</span>/100</div>
       <button id="attackBossBtn">Атаковать (10–20 урона)</button>
+      <button id="resetBossBtn" style="display: none">Возродить босса</button>
     </section>
-  </main>
 
-  <!-- Ссылку на script.js вместо app.js -->
+    <button id="resetGameBtn">Сбросить игру</button>
+  </main>
   <script src="script.js"></script>
 </body>
 </html>
