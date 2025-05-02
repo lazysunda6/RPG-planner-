@@ -1,100 +1,25 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>RPG Task Tracker</title>
-  <style>
-    body { font-family: 'Segoe UI', sans-serif; background-color: #181818; color: #f0f0f0; text-align: center; padding: 20px; }
-    h1 { color: #ffd700; }
-    input, button { padding: 10px; font-size: 16px; margin: 5px; }
-    .task { margin: 10px; padding: 10px; background: #2b2b2b; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
-    .task.done { text-decoration: line-through; color: gray; }
-    .xp-bar { height: 20px; background: #555; border-radius: 10px; overflow: hidden; margin: 10px 0; }
-    .xp-bar-fill { height: 100%; background: linear-gradient(to right, #4caf50, #81c784); width: 0%; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Менеджер задач</title>
+  <link rel="stylesheet" href="style.css"> <!-- Ссылка на стиль -->
 </head>
 <body>
 
-  <h1>RPG Task Tracker</h1>
-  <input type="text" id="taskInput" placeholder="Добавь квест..." />
-  <button onclick="addTask()">Добавить</button>
+  <h1>Менеджер задач</h1>
 
-  <div id="taskList"></div>
+  <input type="text" id="taskInput" placeholder="Введите задачу">
+  <button id="addBtn">Добавить задачу</button>
 
-  <div class="xp-bar"><div class="xp-bar-fill" id="xpBar"></div></div>
-  <p>Уровень: <span id="level">1</span> | XP: <span id="xp">0</span> / 100</p>
+  <h2>Список задач:</h2>
+  <ul id="taskList"></ul>
 
-  <script>
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    let xp = parseInt(localStorage.getItem("xp")) || 0;
-    let level = parseInt(localStorage.getItem("level")) || 1;
+  <h2>Ваш уровень: <span id="level">1</span></h2>
+  <progress id="xpBar" value="0" max="100"></progress>
+  <p id="achievementText"></p>
 
-    function saveData() {
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-      localStorage.setItem("xp", xp);
-      localStorage.setItem("level", level);
-    }
-
-    function addTask() {
-      const input = document.getElementById("taskInput");
-      const text = input.value.trim();
-      if (text) {
-        tasks.push({ text, done: false });
-        input.value = "";
-        renderTasks();
-        saveData();
-      }
-    }
-
-    function toggleTask(index) {
-      if (!tasks[index].done) {
-        tasks[index].done = true;
-        xp += 20;
-        checkLevelUp();
-      } else {
-        xp -= 20;
-        tasks[index].done = false;
-      }
-      updateStats();
-      renderTasks();
-      saveData();
-    }
-
-    function renderTasks() {
-      const list = document.getElementById("taskList");
-      list.innerHTML = "";
-      tasks.forEach((task, index) => {
-        const taskDiv = document.createElement("div");
-        taskDiv.className = "task" + (task.done ? " done" : "");
-        taskDiv.innerHTML = `
-          <span>${task.text}</span>
-          <button onclick="toggleTask(${index})">${task.done ? "Вернуть" : "✓"}</button>
-        `;
-        list.appendChild(taskDiv);
-      });
-    }
-
-    function updateStats() {
-      document.getElementById("xp").textContent = xp;
-      document.getElementById("level").textContent = level;
-      const bar = document.getElementById("xpBar");
-      bar.style.width = (xp % 100) + "%";
-    }
-
-    function checkLevelUp() {
-      while (xp >= 100) {
-        xp -= 100;
-        level++;
-        alert("Новый уровень! Ты теперь lvl " + level + "!");
-      }
-    }
-
-    // Инициализация
-    renderTasks();
-    updateStats();
-  </script>
-
+  <script src="script.js"></script> <!-- Ссылка на скрипт -->
 </body>
 </html>
