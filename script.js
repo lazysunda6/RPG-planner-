@@ -21,9 +21,11 @@ const game = (() => {
   };
 
   function init() {
+    console.log("Инициализация игры начата");
     loadData();
     bindEvents();
     renderAll();
+    console.log("Инициализация завершена");
   }
 
   function loadData() {
@@ -78,7 +80,6 @@ const game = (() => {
     while (state.xp >= required) {
       state.xp -= required;
       state.level++;
-      // playSound('levelUp');
       checkAchievements();
     }
   }
@@ -95,7 +96,6 @@ const game = (() => {
       damage += strengthScroll.damageBonus;
     }
     state.bossHp = clamp(state.bossHp - damage, 0, gameData.bosses[state.currentBoss].maxHp);
-    // playSound('attack');
     if (state.bossHp <= 0) {
       state.defeatedBosses.add(state.currentBoss);
       state.xp += gameData.bosses[state.currentBoss].xpReward;
@@ -211,27 +211,87 @@ const game = (() => {
     const el = document.getElementById('achievementText');
     el.textContent = `Достижение: ${text}`;
     el.classList.add('achievement-unlock');
-    // playSound('achievement');
     setTimeout(() => el.classList.remove('achievement-unlock'), 3000);
   }
 
   function bindEvents() {
-    document.getElementById('addBtn').addEventListener('click', addTask);
-    document.getElementById('taskInput').addEventListener('keypress', e => {
-      if (e.key === 'Enter') addTask();
-    });
-    document.querySelector('#attackBossBtn').addEventListener('click', attackBoss);
-    document.querySelector('#resetBossBtn').addEventListener('click', resetBoss);
-    document.querySelector('#resetGameBtn').addEventListener('click', resetGame);
+    const addBtn = document.getElementById('addBtn');
+    const taskInput = document.getElementById('taskInput');
+    const attackBossBtn = document.querySelector('#attackBossBtn');
+    const resetBossBtn = document.querySelector('#resetBossBtn');
+    const resetGameBtn = document.querySelector('#resetGameBtn');
+    const taskList = document.getElementById('taskList');
 
-    document.getElementById('taskList').addEventListener('click', e => {
-      const index = e.target.dataset.index;
-      if (e.target.classList.contains('taskBtn')) {
-        toggleTask(index);
-      } else if (e.target.classList.contains('deleteBtn')) {
-        game.deleteTask(index);
-      }
-    });
+    // Отладочные логи для проверки
+    console.log("Привязка событий...");
+    console.log("addBtn:", addBtn);
+    console.log("taskInput:", taskInput);
+    console.log("attackBossBtn:", attackBossBtn);
+    console.log("resetBossBtn:", resetBossBtn);
+    console.log("resetGameBtn:", resetGameBtn);
+    console.log("taskList:", taskList);
+
+    if (addBtn) {
+      addBtn.addEventListener('click', () => {
+        console.log("Кнопка 'Добавить квест' нажата");
+        addTask();
+      });
+    } else {
+      console.error("Кнопка 'addBtn' не найдена");
+    }
+
+    if (taskInput) {
+      taskInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+          console.log("Нажата клавиша Enter в поле ввода");
+          addTask();
+        }
+      });
+    } else {
+      console.error("Поле ввода 'taskInput' не найдено");
+    }
+
+    if (attackBossBtn) {
+      attackBossBtn.addEventListener('click', () => {
+        console.log("Кнопка 'Атаковать' нажата");
+        attackBoss();
+      });
+    } else {
+      console.error("Кнопка 'attackBossBtn' не найдена");
+    }
+
+    if (resetBossBtn) {
+      resetBossBtn.addEventListener('click', () => {
+        console.log("Кнопка 'Возродить босса' нажата");
+        resetBoss();
+      });
+    } else {
+      console.error("Кнопка 'resetBossBtn' не найдена");
+    }
+
+    if (resetGameBtn) {
+      resetGameBtn.addEventListener('click', () => {
+        console.log("Кнопка 'Сбросить игру' нажата");
+        resetGame();
+      });
+    } else {
+      console.error("Кнопка 'resetGameBtn' не найдена");
+    }
+
+    if (taskList) {
+      taskList.addEventListener('click', e => {
+        const index = e.target.dataset.index;
+        if (e.target.classList.contains('taskBtn')) {
+          console.log("Кнопка 'Сделать/✓' нажата для задачи с индексом", index);
+          toggleTask(index);
+        } else if (e.target.classList.contains('deleteBtn')) {
+          console.log("Кнопка 'Удалить' нажата для задачи с индексом", index);
+          game.deleteTask(index);
+        }
+      });
+    } else {
+      console.error("Список задач 'taskList' не найден");
+    }
   }
 
   function updateGame() {
