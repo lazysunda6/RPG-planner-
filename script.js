@@ -71,25 +71,44 @@
 
       const editBtn = document.createElement("button");
       editBtn.textContent = "Редактировать";
-      editBtn.onclick = () => editTask(index);
+      editBtn.dataset.index = index; // Сохраняем индекс в data-атрибут
       li.appendChild(editBtn);
 
       const deleteBtn = document.createElement("button");
       deleteBtn.textContent = "Удалить";
-      deleteBtn.onclick = () => deleteTask(index);
+      deleteBtn.dataset.index = index;
       li.appendChild(deleteBtn);
 
       const doneBtn = document.createElement("button");
       doneBtn.textContent = task.done ? "✓ Сделано" : "Сделать";
-      doneBtn.onclick = () => markAsDone(index);
+      doneBtn.dataset.index = index;
       li.appendChild(doneBtn);
 
       taskList.appendChild(li);
     });
   }
 
+  // Делегирование событий для кнопок
+  document.getElementById("taskList").addEventListener("click", (e) => {
+    const target = e.target;
+    if (!target.matches("button")) return;
+
+    const index = parseInt(target.dataset.index);
+    if (isNaN(index)) return;
+
+    if (target.textContent === "Редактировать") {
+      editTask(index);
+    } else if (target.textContent === "Удалить") {
+      deleteTask(index);
+    } else if (target.textContent === "Сделать" || target.textContent === "✓ Сделано") {
+      markAsDone(index);
+    }
+  });
+
   function editTask(index) {
     const li = document.querySelector(`#taskList li:nth-child(${index + 1})`);
+    if (!li) return;
+
     const span = li.querySelector(".task-text");
     const input = document.createElement("input");
     input.type = "text";
@@ -152,7 +171,7 @@
     const earned = achievements.find(ach => ach.condition());
     if (earned) {
       achievementText.textContent = `Достижение: ${earned.text}`;
-      achievementText.classList.add("achievement-unlock");
+      achievementCheckText.classList.add("achievement-unlock");
       setTimeout(() => {
         achievementText.classList.remove("achievement-unlock");
         achievementText.textContent = "";
