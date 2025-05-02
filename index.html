@@ -3,23 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Менеджер задач</title>
-  <link rel="stylesheet" href="style.css"> <!-- Ссылка на стиль -->
+  <title>Task Manager</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="taskApp">
+    <h1>Управление задачами</h1>
+    <input type="text" id="taskInput" placeholder="Введите задачу">
+    <button id="addBtn">Добавить задачу</button>
 
-  <h1>Менеджер задач</h1>
+    <ul id="taskList"></ul>
 
-  <input type="text" id="taskInput" placeholder="Введите задачу">
-  <button id="addBtn">Добавить задачу</button>
+    <div id="level">Уровень: 1</div>
+    <progress id="xpBar" max="100" value="0"></progress>
+    <div id="achievementText"></div>
+  </div>
 
-  <h2>Список задач:</h2>
-  <ul id="taskList"></ul>
-
-  <h2>Ваш уровень: <span id="level">1</span></h2>
-  <progress id="xpBar" value="0" max="100"></progress>
-  <p id="achievementText"></p>
-
-  <script src="script.js"></script> <!-- Ссылка на скрипт -->
+  <script src="script.js"></script>
 </body>
 </html>
