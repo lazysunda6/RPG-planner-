@@ -12,7 +12,31 @@
     <p>Для работы приложения требуется JavaScript. Пожалуйста, включите его в настройках браузера.</p>
   </noscript>
   <main id="taskApp">
-    <!-- Контент (без изменений) -->
+    <h1>Управление задачами: RPG Edition</h1>
+    <label for="taskInput">Введите квест:</label>
+    <input type="text" id="taskInput" placeholder="Например, победить прокрастинацию">
+    <button id="addBtn">Добавить квест</button>
+
+    <ul id="taskList" aria-live="polite"></ul>
+
+    <div id="level">Уровень: 1</div>
+    <progress id="xpBar" max="100" value="0"></progress>
+    <div>Опыт: <span id="xpValue">0</span>/<span id="requiredXP">100</span></div>
+    <div id="achievementText"></div>
+
+    <section id="inventory"><h2>Инвентарь</h2> пусто</section>
+    <section id="quests"><h2>Активные квесты</h2> нет активных</section>
+
+    <section id="boss">
+      <h2>Босс: Лень</h2>
+      <div id="bossDescription">Могучий враг, питающийся вашим бездействием.</div>
+      <progress id="bossProgress" max="100" value="100"></progress>
+      <div>HP: <span id="bossHp">100</span>/<span id="bossMaxHp">100</span></div>
+      <button id="attackBossBtn">Атаковать (10–20 урона)</button>
+      <button id="resetBossBtn" style="display: none">Возродить босса</button>
+    </section>
+
+    <button id="resetGameBtn">Сбросить игру</button>
   </main>
   <script src="utils.js"></script>
   <script src="data.js"></script>
