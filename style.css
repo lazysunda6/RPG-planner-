@@ -1,94 +1,263 @@
+
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@400;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: 'Courier New', monospace;
-  background: #1a1a2e;
+  background: #0d0d1a;
+  background-image: 
+    radial-gradient(ellipse at top, #1a1a3e 0%, #0d0d1a 70%);
   color: #e6e6e6;
+  min-height: 100vh;
   letter-spacing: 0.5px;
 }
 
 #taskApp {
-  max-width: 600px;
+  max-width: 650px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px 20px;
 }
 
-button, input {
+h1 {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #ffd700;
+  text-shadow: 0 0 20px #ffd70088, 0 0 40px #ffd70044;
+  border-bottom: 2px solid #ffd70044;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+  letter-spacing: 2px;
+}
+
+h2 {
+  color: #4cc9f0;
+  font-size: 1rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  border-left: 3px solid #4cc9f0;
+  padding-left: 8px;
+}
+
+/* Поле ввода */
+input[type="text"] {
+  width: 100%;
+  padding: 10px 14px;
+  background: #1a1a3e;
+  border: 1px solid #4cc9f044;
+  border-radius: 4px;
+  color: #e6e6e6;
   font-family: inherit;
-  padding: 8px;
-  margin: 5px 0;
+  font-size: 0.95rem;
+  margin: 6px 0;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+input[type="text"]:focus {
+  outline: none;
+  border-color: #4cc9f0;
+  box-shadow: 0 0 10px #4cc9f044;
+}
+
+/* Кнопки */
+button {
+  font-family: inherit;
+  padding: 9px 16px;
+  margin: 5px 4px 5px 0;
+  border: 1px solid #4cc9f0;
+  border-radius: 4px;
+  background: transparent;
+  color: #4cc9f0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+button:hover:not(:disabled) {
+  background: #4cc9f0;
+  color: #0d0d1a;
+  box-shadow: 0 0 15px #4cc9f088;
+  transform: translateY(-1px);
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: #444;
+  color: #444;
+}
+
+/* Кнопка атаки */
+#attackBossBtn {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+#attackBossBtn:hover:not(:disabled) {
+  background: #ff6b6b;
+  color: #0d0d1a;
+  box-shadow: 0 0 15px #ff6b6b88;
+}
+
+/* Кнопка сброса */
+#resetGameBtn {
+  border-color: #666;
+  color: #666;
+  font-size: 0.8rem;
+}
+
+/* Список задач */
+#taskList {
+  list-style: none;
+  margin: 10px 0;
+}
+#taskList li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  margin: 6px 0;
+  background: #1a1a3e;
+  border: 1px solid #2a2a5e;
+  border-radius: 4px;
+  transition: border 0.2s;
+}
+#taskList li:hover {
+  border-color: #4cc9f044;
+}
+#taskList li span {
+  flex: 1;
+  font-size: 0.95rem;
 }
 
 .task-complete {
   text-decoration: line-through;
-  opacity: 0.7;
+  opacity: 0.5;
+  color: #888;
 }
 
-.achievement-unlock {
-  animation: glow 2s ease-in-out;
-  color: gold;
-  font-weight: bold;
-}
-
-@keyframes glow {
-  0% { opacity: 0; transform: scale(0.5); }
-  50% { opacity: 1; transform: scale(1.1); }
-  100% { opacity: 0; transform: scale(0.8); }
+/* Уровень и XP */
+#level {
+  font-size: 1.1rem;
+  color: #ffd700;
+  margin: 15px 0 6px;
+  text-shadow: 0 0 10px #ffd70066;
 }
 
 progress {
   width: 100%;
-  height: 20px;
-  border: 1px solid #4cc9f0;
-  background: #2a2a4e;
+  height: 18px;
+  border: 1px solid #4cc9f044;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #1a1a3e;
+  margin: 6px 0;
 }
 progress::-webkit-progress-bar {
-  background: #2a2a4e;
+  background: #1a1a3e;
 }
 progress::-webkit-progress-value {
-  background: #4cc9f0;
+  background: linear-gradient(90deg, #4cc9f0, #7b2fff);
+  border-radius: 10px;
 }
 progress::-moz-progress-bar {
-  background: #4cc9f0;
+  background: linear-gradient(90deg, #4cc9f0, #7b2fff);
 }
 
-.item, button {
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+/* Босс */
+#boss {
+  border: 1px solid #ff6b6b44;
+  border-radius: 6px;
+  padding: 15px;
+  margin: 20px 0;
+  background: #1a0d0d;
+  box-shadow: 0 0 20px #ff6b6b11;
 }
-.item:hover:not([aria-disabled="true"]), button:hover:not(:disabled) {
-  background: #4cc9f0;
-  color: #1a1a2e;
-  transform: scale(1.05);
+#boss h2 {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
 }
-.item:focus, button:focus {
-  outline: 2px solid #4cc9f0;
-  outline-offset: 2px;
-}
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
 #bossDescription {
   font-style: italic;
-  color: #a0a0ff;
-  margin-bottom: 10px;
+  color: #ff9999;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+#bossProgress::-webkit-progress-value {
+  background: linear-gradient(90deg, #ff6b6b, #ff4444);
+}
+#bossProgress::-moz-progress-bar {
+  background: linear-gradient(90deg, #ff6b6b, #ff4444);
 }
 
-#boss {
-  border: 2px solid #4cc9f0;
-  padding: 10px;
-  border-radius: 5px;
+/* Инвентарь */
+[4/29/2026 6:22 PM] Сизо: #inventory {
+  border: 1px solid #ffd70033;
+  border-radius: 6px;
+  padding: 15px;
+  margin: 20px 0;
+  background: #1a1a0d;
+}
+#inventory h2 {
+  color: #ffd700;
+  border-color: #ffd700;
+}
+.item {
+  display: inline-block;
+  padding: 7px 12px;
+  margin: 4px;
+  border: 1px solid #ffd70066;
+  border-radius: 4px;
+  background: #2a2a0d;
+  color: #ffd700;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+.item:hover:not([aria-disabled="true"]) {
+  background: #ffd700;
+  color: #0d0d0d;
+  box-shadow: 0 0 10px #ffd70088;
+  transform: scale(1.05);
 }
 
+/* Квесты */
+#quests {
+  border: 1px solid #4cc9f022;
+  border-radius: 6px;
+  padding: 15px;
+  margin: 20px 0;
+  background: #0d1a1a;
+}
+#quests div {
+  padding: 6px 0;
+  border-bottom: 1px solid #4cc9f011;
+  font-size: 0.9rem;
+  color: #aaddff;
+}
+
+/* Достижения */
+.achievement-unlock {
+  animation: glow 2.5s ease-in-out;
+  color: #ffd700;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1rem;
+  margin: 10px 0;
+}
+@keyframes glow {
+  0% { opacity: 0; transform: scale(0.8); }
+  30% { opacity: 1; transform: scale(1.1); }
+  70% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; }
+}
+
+/* Мобильная версия */
 @media (max-width: 600px) {
-  #taskApp {
-    padding: 10px;
-  }
-  h1 {
-    font-size: 1.5rem;
-  }
-  button, input {
-    padding: 6px;
-    font-size: 0.9rem;
-  }
+  h1 { font-size: 1.4rem; }
+  button { padding: 7px 12px; font-size: 0.85rem; }
+  #taskList li { flex-wrap: wrap; }
 }
