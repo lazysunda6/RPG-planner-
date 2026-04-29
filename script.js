@@ -89,7 +89,7 @@ const game = (() => {
   }
 
   function attackBoss() {
-    const doneTask = state.tasks.filter(t => t.done)
+    const doneTask = state.tasks.filter(t => t.done).length
     if (doneTasks === 0) return alert ('Выполни задание потом атакуй глупый чокопай');
     if (state.bossHp <= 0) return alert('Босс уже побеждён!');
     let damage = config.bossDamageMin + Math.floor(Math.random() * (config.bossDamageMax - config.bossDamageMin + 1));
