@@ -89,6 +89,8 @@ const game = (() => {
   }
 
   function attackBoss() {
+    const doneTask = state.tasks.filter(t => t.done)
+    if (doneTasks === 0) return alert ('Выполни задание потом атакуй глупый чокопай');
     if (state.bossHp <= 0) return alert('Босс уже побеждён!');
     let damage = config.bossDamageMin + Math.floor(Math.random() * (config.bossDamageMax - config.bossDamageMin + 1));
     const strengthScroll = state.items.find(item => item.name === "Свиток силы" && !item.used);
