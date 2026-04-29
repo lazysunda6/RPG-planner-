@@ -7,7 +7,7 @@ function safeParse(json) {
   }
 }
 
-export function formatNumber(num) {
+function formatNumber(num) {
   return num.toLocaleString('ru-RU');
 }
 
