@@ -1,5 +1,5 @@
 // utils.js
-export function safeParse(json) {
+function safeParse(json) {
   try {
     return json ? JSON.parse(json) : null;
   } catch {
@@ -11,6 +11,6 @@ export function formatNumber(num) {
   return num.toLocaleString('ru-RU');
 }
 
-export function clamp(value, min, max) {
+function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
